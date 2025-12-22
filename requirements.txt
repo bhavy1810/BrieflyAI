@@ -7,3 +7,6 @@ sentence-transformers
 pypdf
 streamlit
 python-dotenv
+python-docx
+reportlab
+fpdf
