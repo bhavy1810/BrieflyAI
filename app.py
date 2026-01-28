@@ -372,19 +372,24 @@ def extract_video_id(url):
 
 def get_youtube_transcript(video_id):
     try:
-        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+        # Try to get transcript in English first
         try:
-            transcript = transcript_list.find_manually_created_transcript(['en'])
+            transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
         except:
+            # If English not available, try to get any available transcript
             try:
-                transcript = transcript_list.find_generated_transcript(['en'])
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                # Get the first available transcript
+                transcript = next(iter(transcript_list))
+                transcript_data = transcript.fetch()
             except:
-                transcript = next(iter(transcript_list._transcripts.values()))
+                # Last resort: get transcript in any language
+                transcript_data = YouTubeTranscriptApi.get_transcript(video_id)
         
-        data = transcript.fetch()
-        return " ".join(item["text"] for item in data)
+        return " ".join(item["text"] for item in transcript_data)
     except Exception as e:
         st.error(f"Could not fetch transcript: {str(e)}")
+        st.info("💡 This video may not have captions available, or captions are disabled.")
         return None
 
 # =========================================================
