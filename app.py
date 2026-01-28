@@ -874,6 +874,7 @@ with tab3:
     webpage_url = st.text_input(
         "🔗 Enter webpage URL",
         key="webpage_url_input",
+        placeholder="https://example.com/article"
     )
     
     # Show URL validation
@@ -965,6 +966,7 @@ with tab4:
     
     youtube_link = st.text_input(
         "🔗 Enter YouTube Video Link",
+        placeholder="https://www.youtube.com/watch?v=...",
         disabled=not youtube_enabled
     )
     
@@ -994,7 +996,6 @@ with tab4:
                         if transcript:
                             st.info("✅ Using YouTube captions")
                         else:
-                            st.info("🎙️ using Groq Whisper")
                             try:
                                 transcript = groq_whisper_transcription(youtube_link)
                             except Exception as e:
@@ -1019,13 +1020,14 @@ with tab4:
             elif not video_id:
                 st.error("Invalid YouTube URL")
             else:
-                with st.spinner("🎙️ Transcribing video audio..."):
+                with st.spinner("Processing video with RAG..."):
                     try:
                         transcript = get_youtube_transcript(video_id)
                         
                         if transcript:
                             st.info("✅ Using YouTube captions")
                         else:
+                            st.info("🎙️ No captions found — using Groq Whisper")
                             try:
                                 transcript = groq_whisper_transcription(youtube_link)
                             except Exception as e:
@@ -1251,3 +1253,9 @@ if summary:
 # FOOTER
 # =========================================================
 st.divider()
+st.markdown("""
+<div style='text-align: center; color: #888; padding: 20px;'>
+    <p>BrieflyAI - Powered by LangChain, Groq & FAISS</p>
+    <p style='font-size: 0.8em;'>Made with ❤️ using Streamlit</p>
+</div>
+""", unsafe_allow_html=True)
