@@ -17,8 +17,4 @@ python-pptx
 pandas
 openpyxl
 xlrd
-<<<<<<< HEAD
 bs4
-=======
-bs4
->>>>>>> f899eee (full code)
