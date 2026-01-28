@@ -1,0 +1,646 @@
+/* =========================================================
+   BrieflyAI - Premium Glassmorphism UI
+   ========================================================= */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Global Styles */
+* {
+    font-family: 'Inter', sans-serif;
+    color: black;
+    transition: background 0.3s ease,
+                box-shadow 0.3s ease,
+                transform 0.25s ease;
+}
+
+/* Main App Background */
+.stApp {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-attachment: fixed;
+    background-size: 300% 300%;
+    animation: gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Floating Bubbles */
+.floating-bubble {
+    position: fixed;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bubble-1 {
+    top: 10%;
+    left: 15%;
+    animation: floatBubble1 18s ease-in-out infinite;
+}
+
+.bubble-2 {
+    top: 60%;
+    left: 80%;
+    animation: floatBubble2 22s ease-in-out infinite;
+}
+
+.bubble-3 {
+    top: 30%;
+    left: 70%;
+    animation: floatBubble3 20s ease-in-out infinite;
+}
+
+.bubble-4 {
+    top: 75%;
+    left: 25%;
+    animation: floatBubble4 25s ease-in-out infinite;
+}
+
+.bubble-5 {
+    top: 45%;
+    left: 50%;
+    animation: floatBubble5 19s ease-in-out infinite;
+}
+
+.bubble-6 {
+    top: 20%;
+    left: 90%;
+    animation: floatBubble6 23s ease-in-out infinite;
+}
+
+.bubble-7 {
+    top: 85%;
+    left: 60%;
+    animation: floatBubble7 21s ease-in-out infinite;
+}
+
+.bubble-8 {
+    top: 5%;
+    left: 40%;
+    animation: floatBubble8 24s ease-in-out infinite;
+}
+
+.bubble-9 {
+    top: 50%;
+    left: 10%;
+    animation: floatBubble9 17s ease-in-out infinite;
+}
+
+.bubble-10 {
+    top: 65%;
+    left: 45%;
+    animation: floatBubble10 26s ease-in-out infinite;
+}
+
+@keyframes floatBubble1 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(200px, -150px) scale(1.2); opacity: 0.7; }
+    50% { transform: translate(400px, 100px) scale(0.8); opacity: 0.4; }
+    75% { transform: translate(-100px, 200px) scale(1.1); opacity: 0.6; }
+}
+
+@keyframes floatBubble2 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(-300px, 150px) scale(0.9); opacity: 0.4; }
+    50% { transform: translate(-150px, -200px) scale(1.3); opacity: 0.8; }
+    75% { transform: translate(100px, -50px) scale(1); opacity: 0.5; }
+}
+
+@keyframes floatBubble3 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(-200px, 200px) scale(1.1); opacity: 0.7; }
+    50% { transform: translate(-400px, -100px) scale(0.85); opacity: 0.4; }
+    75% { transform: translate(150px, 150px) scale(1.2); opacity: 0.6; }
+}
+
+@keyframes floatBubble4 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(300px, -250px) scale(1.15); opacity: 0.5; }
+    50% { transform: translate(150px, -400px) scale(0.9); opacity: 0.7; }
+    75% { transform: translate(-200px, -100px) scale(1.25); opacity: 0.4; }
+}
+
+@keyframes floatBubble5 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(-250px, -200px) scale(1.3); opacity: 0.8; }
+    50% { transform: translate(200px, 150px) scale(0.75); opacity: 0.4; }
+    75% { transform: translate(-100px, 250px) scale(1.1); opacity: 0.6; }
+}
+
+@keyframes floatBubble6 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(-350px, 300px) scale(0.95); opacity: 0.5; }
+    50% { transform: translate(-200px, 150px) scale(1.2); opacity: 0.7; }
+    75% { transform: translate(-100px, -100px) scale(0.85); opacity: 0.4; }
+}
+
+@keyframes floatBubble7 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(200px, -300px) scale(1.25); opacity: 0.7; }
+    50% { transform: translate(-250px, -200px) scale(0.8); opacity: 0.4; }
+    75% { transform: translate(100px, -150px) scale(1.15); opacity: 0.6; }
+}
+
+@keyframes floatBubble8 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(150px, 350px) scale(1.1); opacity: 0.5; }
+    50% { transform: translate(-200px, 250px) scale(1.3); opacity: 0.8; }
+    75% { transform: translate(300px, 100px) scale(0.9); opacity: 0.4; }
+}
+
+@keyframes floatBubble9 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(400px, 200px) scale(0.85); opacity: 0.7; }
+    50% { transform: translate(300px, -150px) scale(1.2); opacity: 0.4; }
+    75% { transform: translate(150px, 300px) scale(1.05); opacity: 0.6; }
+}
+
+@keyframes floatBubble10 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(-300px, -250px) scale(1.15); opacity: 0.4; }
+    50% { transform: translate(250px, -100px) scale(0.75); opacity: 0.7; }
+    75% { transform: translate(-150px, 200px) scale(1.3); opacity: 0.5; }
+}
+
+.bubble-11 {
+    top: 15%;
+    left: 5%;
+    animation: floatBubble11 27s ease-in-out infinite;
+}
+
+.bubble-12 {
+    top: 80%;
+    left: 85%;
+    animation: floatBubble12 19s ease-in-out infinite;
+}
+
+.bubble-13 {
+    top: 40%;
+    left: 30%;
+    animation: floatBubble13 23s ease-in-out infinite;
+}
+
+.bubble-14 {
+    top: 25%;
+    left: 65%;
+    animation: floatBubble14 21s ease-in-out infinite;
+}
+
+.bubble-15 {
+    top: 70%;
+    left: 15%;
+    animation: floatBubble15 24s ease-in-out infinite;
+}
+
+.bubble-16 {
+    top: 55%;
+    left: 75%;
+    animation: floatBubble16 20s ease-in-out infinite;
+}
+
+.bubble-17 {
+    top: 10%;
+    left: 50%;
+    animation: floatBubble17 26s ease-in-out infinite;
+}
+
+.bubble-18 {
+    top: 90%;
+    left: 40%;
+    animation: floatBubble18 22s ease-in-out infinite;
+}
+
+.bubble-19 {
+    top: 35%;
+    left: 20%;
+    animation: floatBubble19 18s ease-in-out infinite;
+}
+
+.bubble-20 {
+    top: 60%;
+    left: 55%;
+    animation: floatBubble20 25s ease-in-out infinite;
+}
+
+@keyframes floatBubble11 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(350px, 200px) scale(1.2); opacity: 0.7; }
+    50% { transform: translate(200px, -250px) scale(0.85); opacity: 0.4; }
+    75% { transform: translate(-150px, 100px) scale(1.15); opacity: 0.6; }
+}
+
+@keyframes floatBubble12 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(-400px, -150px) scale(0.9); opacity: 0.5; }
+    50% { transform: translate(-200px, 300px) scale(1.25); opacity: 0.7; }
+    75% { transform: translate(100px, 50px) scale(1.1); opacity: 0.4; }
+}
+
+@keyframes floatBubble13 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(250px, -300px) scale(1.3); opacity: 0.8; }
+    50% { transform: translate(-300px, 150px) scale(0.75); opacity: 0.4; }
+    75% { transform: translate(200px, 200px) scale(1.05); opacity: 0.6; }
+}
+
+@keyframes floatBubble14 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(-250px, 350px) scale(1.1); opacity: 0.5; }
+    50% { transform: translate(300px, 100px) scale(0.95); opacity: 0.7; }
+    75% { transform: translate(-100px, -200px) scale(1.2); opacity: 0.4; }
+}
+
+@keyframes floatBubble15 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(400px, -200px) scale(0.8); opacity: 0.7; }
+    50% { transform: translate(150px, -350px) scale(1.25); opacity: 0.4; }
+    75% { transform: translate(-200px, 150px) scale(1); opacity: 0.6; }
+}
+
+@keyframes floatBubble16 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(-350px, 200px) scale(1.15); opacity: 0.5; }
+    50% { transform: translate(-100px, -150px) scale(0.85); opacity: 0.7; }
+    75% { transform: translate(250px, 250px) scale(1.3); opacity: 0.4; }
+}
+
+@keyframes floatBubble17 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(200px, 400px) scale(1.1); opacity: 0.6; }
+    50% { transform: translate(-250px, 200px) scale(0.9); opacity: 0.8; }
+    75% { transform: translate(300px, -100px) scale(1.2); opacity: 0.4; }
+}
+
+@keyframes floatBubble18 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(150px, -400px) scale(0.75); opacity: 0.5; }
+    50% { transform: translate(-300px, -250px) scale(1.3); opacity: 0.7; }
+    75% { transform: translate(100px, -150px) scale(0.95); opacity: 0.4; }
+}
+
+@keyframes floatBubble19 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    25% { transform: translate(450px, 150px) scale(1.25); opacity: 0.7; }
+    50% { transform: translate(250px, -200px) scale(0.8); opacity: 0.4; }
+    75% { transform: translate(-100px, 350px) scale(1.1); opacity: 0.6; }
+}
+
+@keyframes floatBubble20 {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+    25% { transform: translate(-200px, -300px) scale(1.05); opacity: 0.4; }
+    50% { transform: translate(350px, 100px) scale(1.2); opacity: 0.8; }
+    75% { transform: translate(-250px, 250px) scale(0.85); opacity: 0.5; }
+}
+
+/* Glass Container */
+.main .block-container {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Titles */
+h1, h2, h3 {
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    text-align: left;
+}
+
+/* Markdown */
+.stMarkdown {
+    color: #ffffff;
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 15px;
+    padding: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 10px;
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 12px 20px;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    background: rgba(255,255,255,0.22);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+}
+
+.stTabs [aria-selected="true"] {
+    background: rgba(255,255,255,0.30);
+    box-shadow: 0 0 25px rgba(255,255,255,0.25),
+                0 4px 20px rgba(0,0,0,0.18);
+}
+
+/* Buttons */
+.stButton > button,
+.stDownloadButton > button {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.30);
+    border-radius: 12px;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 12px 24px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    background: rgba(255,255,255,0.30);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 28px rgba(0,0,0,0.25);
+}
+
+
+/* Inputs */
+/* Paste Text + Link Input - Drag & Drop Glass Card Style */
+/* =========================================
+   FORCE TEXT + LINK INPUT TO LOOK LIKE DROPZONE
+   ========================================= */
+
+/* Outer container */
+div[data-baseweb="textarea"],
+div[data-baseweb="input"] {
+    background: rgba(255,255,255,0.10) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    border-radius: 22px !important;
+    border: 2px dashed rgba(255,255,255,0.40) !important;
+    padding: 22px !important;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.22) !important;
+}
+
+/* Kill Streamlit dark layer */
+div[data-baseweb="textarea"] > div,
+div[data-baseweb="input"] > div {
+    background: transparent !important;
+}
+
+/* Actual input area */
+div[data-baseweb="textarea"] textarea,
+div[data-baseweb="input"] input {
+    background-color: transparent !important;
+    color: #000 !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: 1rem;
+}
+
+/* Remove BaseWeb focus background */
+div[data-baseweb="textarea"] textarea:focus,
+div[data-baseweb="input"] input:focus {
+    background-color: transparent !important;
+    outline: none !important;
+}
+
+/* Placeholder */
+div[data-baseweb="textarea"] textarea::placeholder,
+div[data-baseweb="input"] input::placeholder {
+    color: rgba(255,255,255,0.75) !important;
+}
+
+/* Focus glow like uploader */
+div[data-baseweb="textarea"]:focus-within,
+div[data-baseweb="input"]:focus-within {
+    border-color: rgba(255,255,255,0.7) !important;
+    box-shadow: 0 0 40px rgba(255,255,255,0.35) !important;
+}
+
+/* Expander content text color */
+div[data-testid="stExpander"] pre,
+div[data-testid="stExpander"] code,
+div[data-testid="stExpander"] span{
+    color: #ffffff !important;
+}
+
+/* ===== Expander code block ===== */
+div[data-testid="stExpander"] pre {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border-radius: 10px;
+}
+
+/* Code text */
+div[data-testid="stExpander"] code {
+    color: #ffffff !important;
+}
+
+/* ===== Copy button styling ===== */
+div[data-testid="stExpander"] button {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    transition: all 0.25s ease;
+}
+
+/* Hover effect */
+div[data-testid="stExpander"] button:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    transform: scale(1.05);
+}
+
+/* Optional: icon inside button */
+div[data-testid="stExpander"] button svg {
+    fill: #ffffff !important;
+}
+
+/* File Uploader */
+.stFileUploader {
+    background: rgba(255,255,255,0.04) !important;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-radius: 18px;
+    border: 2px dashed rgba(255,255,255,0.25);
+    padding: 24px;
+}
+
+.stFileUploader section {
+    background: transparent !important;
+    color: black;
+}
+
+.stFileUploader span,
+.stFileUploader label {
+    color: black;
+    font-weight: 500;
+}
+
+.stFileUploader:hover {
+    background: rgba(255,255,255,0.08) !important;
+    border-color: rgba(255,255,255,0.45);
+    box-shadow: 0 0 30px rgba(255,255,255,0.15);
+}
+
+.stFileUploader button {
+    background: rgba(255,255,255,0.12) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 12px;
+    color: black !important;
+    font-weight: 600;
+    padding: 10px 22px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+}
+
+.stFileUploader button:hover {
+    background: rgba(255,255,255,0.28) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 26px rgba(0,0,0,0.28);
+}
+
+/* Alerts */
+.stAlert {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #ffffff;
+}
+
+/* Expander */
+/* ===== Expander Container (YOU ALREADY HAVE THIS) ===== */
+.stExpander {
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.20);
+}
+
+/* ===== Expander Header ===== */
+.stExpander summary {
+    background: transparent !important; /* use parent blur */
+    color: #ffffff;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 12px;
+    transition: all 0.25s ease;
+}
+
+/* Hover – subtle glass feedback */
+.stExpander summary:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+/* Active / Focus – NO dark flash */
+.stExpander summary:focus,
+.stExpander summary:active,
+.stExpander summary:focus-visible {
+    background: rgba(255,255,255,0.08);
+    outline: none;
+    box-shadow: none;
+}
+
+/* Remove default arrow background */
+.stExpander summary::-webkit-details-marker {
+    display: none;
+}
+
+/* ===== Expanded Content ===== */
+.stExpander > div {
+    background: transparent; /* keep single blur */
+    padding: 14px 18px 18px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-radius: 0 0 12px 12px;
+}
+
+/* When open, connect header + content */
+.stExpander[open] summary {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* Glass Card Utility */
+.glass-card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin-top: 1rem;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.18);
+}
+
+/* Code Blocks */
+code, pre {
+    background: rgba(0,0,0,0.4);
+    color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* Media */
+video, audio, img {
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.25);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main .block-container {
+        padding: 1rem;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .floating-bubble {
+        width: 50px;
+        height: 50px;
+    }
+}

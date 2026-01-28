@@ -1,14 +1,27 @@
 # =========================================================
+<<<<<<< HEAD
 # BrieflyAI – RAG-based Document, Text, Webpage & YouTube Summarizer
+=======
+# BrieflyAI – RAG-based PDF, DOCX, TXT, PPT, CSV, Excel, YouTube, Video, Audio & Webpage Summarizer
+>>>>>>> f899eee (full code)
 # LangChain + Groq + FAISS
+# UPDATED: Enhanced error handling and dependency checks
 # =========================================================
 
 import streamlit as st
 import os
 import io
 import re
+<<<<<<< HEAD
 from io import BytesIO
 from dotenv import load_dotenv
+=======
+import subprocess
+import tempfile
+from io import BytesIO
+from dotenv import load_dotenv
+import math
+>>>>>>> f899eee (full code)
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -39,8 +52,23 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
+<<<<<<< HEAD
 # YouTube
 from youtube_transcript_api import YouTubeTranscriptApi
+=======
+# YouTube & Transcription - with error handling
+try:
+    from youtube_transcript_api import YouTubeTranscriptApi
+    YOUTUBE_TRANSCRIPT_AVAILABLE = True
+except ImportError:
+    YOUTUBE_TRANSCRIPT_AVAILABLE = False
+
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
+>>>>>>> f899eee (full code)
 
 # =========================================================
 # CONFIG
@@ -55,15 +83,26 @@ def load_css(file_name):
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except:
         pass
+<<<<<<< HEAD
 
 load_css("style.css")
 
 bubbles_html = ''.join([
     f'<div class="bubble" style="--i:{i};"></div>'
+=======
+        
+load_css("style.css")
+bubbles_html = ''.join([
+    f'<div class="floating-bubble bubble-{i}"></div>' 
+>>>>>>> f899eee (full code)
     for i in range(1, 21)
 ])
 st.markdown(bubbles_html, unsafe_allow_html=True)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f899eee (full code)
 st.set_page_config(
     page_title="BrieflyAI",
     page_icon="📄",
@@ -71,7 +110,57 @@ st.set_page_config(
 )
 
 st.title("📄 BrieflyAI")
+<<<<<<< HEAD
 st.markdown("Upload **PDF / DOCX / TXT / PPT / CSV / Excel**, paste text, summarize **YouTube videos** or **webpages** with **RAG-powered AI summaries** 🚀")
+=======
+st.markdown("Upload **PDF / DOCX / TXT / PPT / CSV / Excel / Videos / Audio**, paste text, summarize **YouTube videos** or **webpages** with **RAG-powered AI summaries** 🚀")
+
+# =========================================================
+# DEPENDENCY CHECKS
+# =========================================================
+def check_dependencies():
+    """Check if all required dependencies are installed"""
+    missing_deps = []
+    
+    if not YOUTUBE_TRANSCRIPT_AVAILABLE:
+        missing_deps.append(("youtube-transcript-api", "pip install youtube-transcript-api --break-system-packages"))
+    
+    if not GROQ_AVAILABLE:
+        missing_deps.append(("groq", "pip install groq --break-system-packages"))
+    
+    # Check yt-dlp
+    try:
+        subprocess.run(["yt-dlp", "--version"], capture_output=True, check=True)
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        missing_deps.append(("yt-dlp", "pip install yt-dlp --break-system-packages"))
+    
+    # Check ffmpeg
+    try:
+        subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        missing_deps.append(("ffmpeg", "sudo apt-get install ffmpeg"))
+    
+    return missing_deps
+
+def show_dependency_warning():
+    """Show warning about missing dependencies for YouTube features"""
+    missing = check_dependencies()
+    
+    if missing and (st.session_state.get("show_youtube_warning", True)):
+        with st.expander("⚠️ YouTube Features - Missing Dependencies", expanded=True):
+            st.warning("Some YouTube features may not work. Missing dependencies:")
+            for dep, install_cmd in missing:
+                st.code(f"❌ {dep}\n   Install: {install_cmd}")
+            
+            if not GROQ_API_KEY:
+                st.error("🔑 GROQ_API_KEY not set!")
+                st.info("Get your free API key from: https://console.groq.com/keys")
+                st.code("export GROQ_API_KEY='your_key_here'\n# OR add to .env file:\nGROQ_API_KEY=your_key_here")
+            
+            if st.button("✅ I've installed the dependencies"):
+                st.session_state.show_youtube_warning = False
+                st.rerun()
+>>>>>>> f899eee (full code)
 
 # =========================================================
 # SESSION STATE
@@ -84,6 +173,7 @@ defaults = {
     "summary_type": None,
     "is_generating": False,
     "source_text": None,
+    "show_youtube_warning": True,
 }
 
 for k, v in defaults.items():
@@ -93,9 +183,14 @@ for k, v in defaults.items():
 # =========================================================
 # LLM SETUP
 # =========================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> f899eee (full code)
 if not GROQ_API_KEY:
     st.error("❌ GROQ_API_KEY not found in environment variables.")
+    st.info("📝 To fix this:")
+    st.code("1. Get API key from: https://console.groq.com/keys\n2. Add to .env file: GROQ_API_KEY=your_key\n3. Or run: export GROQ_API_KEY='your_key'")
     st.stop()
 
 llm = ChatGroq(
@@ -105,6 +200,12 @@ llm = ChatGroq(
 )
 
 output_parser = StrOutputParser()
+
+# Setup Groq for transcription
+if GROQ_AVAILABLE and GROQ_API_KEY:
+    groq_client = Groq(api_key=GROQ_API_KEY)
+else:
+    groq_client = None
 
 # =========================================================
 # HELPERS - FILE PROCESSING
@@ -122,9 +223,17 @@ def extract_text_from_txt(file):
     """Extract text from TXT file with encoding detection."""
     try:
         content = file.read()
+<<<<<<< HEAD
         try:
             return content.decode('utf-8')
         except UnicodeDecodeError:
+=======
+        # Try UTF-8 first
+        try:
+            return content.decode('utf-8')
+        except UnicodeDecodeError:
+            # Fallback to latin-1
+>>>>>>> f899eee (full code)
             return content.decode('latin-1')
     except Exception as e:
         st.error(f"Error reading TXT file: {str(e)}")
@@ -231,7 +340,10 @@ def extract_text_from_excel(file):
 # =========================================================
 # HELPERS - WEBPAGE SCRAPING
 # =========================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> f899eee (full code)
 def is_valid_url(url):
     """Validate URL format."""
     try:
@@ -246,13 +358,25 @@ def extract_text_from_webpage(url):
     Removes scripts, styles, navigation, and other non-content elements.
     """
     try:
+<<<<<<< HEAD
+=======
+        # Set headers to mimic a browser
+>>>>>>> f899eee (full code)
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
+<<<<<<< HEAD
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         
+=======
+        # Fetch the webpage
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        # Parse with BeautifulSoup
+>>>>>>> f899eee (full code)
         soup = BeautifulSoup(response.content, 'html.parser')
         
         # Remove unwanted elements
@@ -268,6 +392,10 @@ def extract_text_from_webpage(url):
         description = meta_desc.get('content', '').strip() if meta_desc else ""
         
         # Extract main content
+<<<<<<< HEAD
+=======
+        # Try to find main content area
+>>>>>>> f899eee (full code)
         main_content = soup.find('main') or soup.find('article') or soup.find('div', class_=re.compile('content|main|article'))
         
         if main_content:
@@ -275,22 +403,42 @@ def extract_text_from_webpage(url):
         else:
             text_elements = soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'])
         
+<<<<<<< HEAD
         content_parts = []
+=======
+        # Extract text from elements
+        content_parts = []
+        
+        # Add title and description
+>>>>>>> f899eee (full code)
         content_parts.append(f"TITLE: {title_text}\n")
         if description:
             content_parts.append(f"DESCRIPTION: {description}\n")
         content_parts.append(f"URL: {url}\n")
         content_parts.append("=" * 50 + "\n")
         
+<<<<<<< HEAD
         for element in text_elements:
             text = element.get_text().strip()
             if text and len(text) > 20:
+=======
+        # Add main content
+        for element in text_elements:
+            text = element.get_text().strip()
+            if text and len(text) > 20:  # Filter out very short text
+                # Add heading markers
+>>>>>>> f899eee (full code)
                 if element.name in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
                     content_parts.append(f"\n## {text}\n")
                 else:
                     content_parts.append(text)
         
         full_text = "\n".join(content_parts)
+<<<<<<< HEAD
+=======
+        
+        # Clean up extra whitespace
+>>>>>>> f899eee (full code)
         full_text = re.sub(r'\n{3,}', '\n\n', full_text)
         
         return full_text
@@ -307,7 +455,10 @@ def extract_text_from_webpage(url):
 # =========================================================
 # HELPERS - VECTORSTORE & SUMMARIZATION
 # =========================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> f899eee (full code)
 def build_vectorstore(text):
     splitter = RecursiveCharacterTextSplitter(chunk_size=1200, chunk_overlap=200)
     docs = splitter.create_documents([text])
@@ -347,7 +498,11 @@ Detailed Summary:
     
     prompt = ChatPromptTemplate.from_template(template)
     chain = prompt | llm | output_parser
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> f899eee (full code)
     return chain.invoke({
         "context": context[:25000],
         "max_words": max_words
@@ -356,7 +511,10 @@ Detailed Summary:
 # =========================================================
 # HELPERS - YOUTUBE
 # =========================================================
+<<<<<<< HEAD
 
+=======
+>>>>>>> f899eee (full code)
 def extract_video_id(url):
     patterns = [
         r"v=([^&]+)",
@@ -371,6 +529,7 @@ def extract_video_id(url):
     return None
 
 def get_youtube_transcript(video_id):
+<<<<<<< HEAD
     try:
         # Try to get transcript in English first
         try:
@@ -392,6 +551,229 @@ def get_youtube_transcript(video_id):
         st.info("💡 This video may not have captions available, or captions are disabled.")
         return None
 
+=======
+    """Get transcript from YouTube if available"""
+    if not YOUTUBE_TRANSCRIPT_AVAILABLE:
+        return None
+    
+    try:
+        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+        try:
+            transcript = transcript_list.find_manually_created_transcript(['en'])
+        except:
+            try:
+                transcript = transcript_list.find_generated_transcript(['en'])
+            except:
+                transcript = next(iter(transcript_list._transcripts.values()))
+        
+        data = transcript.fetch()
+        return " ".join(item["text"] for item in data)
+    except Exception as e:
+        return None
+
+def get_audio_duration(audio_path):
+    """Get audio duration using ffprobe."""
+    try:
+        result = subprocess.run(
+            [
+                "ffprobe",
+                "-v", "error",
+                "-show_entries", "format=duration",
+                "-of", "default=noprint_wrappers=1:nokey=1",
+                audio_path
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        return float(result.stdout.strip())
+    except:
+        return None
+
+def split_audio_with_ffmpeg(audio_path, max_size_mb=20):
+    """
+    Split audio file into chunks using FFmpeg (no pydub needed).
+    Returns list of file paths.
+    """
+    file_size_mb = os.path.getsize(audio_path) / (1024 * 1024)
+    
+    if file_size_mb <= max_size_mb:
+        return [audio_path]
+    
+    # Get audio duration
+    duration = get_audio_duration(audio_path)
+    if not duration:
+        st.warning("⚠️ Could not determine audio duration. Using single file.")
+        return [audio_path]
+    
+    # Calculate number of chunks needed
+    num_chunks = math.ceil(file_size_mb / max_size_mb)
+    chunk_duration = duration / num_chunks
+    
+    chunk_paths = []
+    base_path = audio_path.replace(".mp3", "")
+    
+    for i in range(num_chunks):
+        start_time = i * chunk_duration
+        chunk_path = f"{base_path}_chunk_{i}.mp3"
+        
+        # Use FFmpeg to extract chunk
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-i", audio_path,
+                "-ss", str(start_time),
+                "-t", str(chunk_duration),
+                "-acodec", "copy",
+                "-y",  # Overwrite output file
+                chunk_path
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        
+        if os.path.exists(chunk_path):
+            chunk_paths.append(chunk_path)
+    
+    return chunk_paths if chunk_paths else [audio_path]
+
+def transcribe_audio_chunks(audio_path):
+    """
+    Transcribe audio file with automatic chunking if needed.
+    """
+    if not groq_client:
+        raise Exception("Groq client not available. Please install groq and set GROQ_API_KEY.")
+    
+    # Check file size and split if necessary
+    file_size_mb = os.path.getsize(audio_path) / (1024 * 1024)
+    
+    if file_size_mb > 20:
+        st.info(f"📦 Large audio file ({file_size_mb:.1f}MB) - splitting into chunks...")
+        audio_chunks = split_audio_with_ffmpeg(audio_path, max_size_mb=20)
+    else:
+        audio_chunks = [audio_path]
+    
+    # Transcribe each chunk
+    full_transcription = []
+    
+    for idx, chunk_path in enumerate(audio_chunks):
+        if len(audio_chunks) > 1:
+            chunk_size = os.path.getsize(chunk_path) / (1024 * 1024)
+            st.info(f"🎙️ Transcribing chunk {idx + 1}/{len(audio_chunks)} ({chunk_size:.1f}MB)...")
+        
+        try:
+            with open(chunk_path, "rb") as audio_file:
+                transcription = groq_client.audio.transcriptions.create(
+                    file=(os.path.basename(chunk_path), audio_file.read()),
+                    model="whisper-large-v3-turbo",
+                    response_format="text"
+                )
+                full_transcription.append(transcription)
+        except Exception as e:
+            st.error(f"❌ Error transcribing chunk {idx + 1}: {str(e)}")
+            continue
+    
+    if not full_transcription:
+        raise Exception("All transcription attempts failed")
+    
+    return " ".join(full_transcription)
+
+def groq_whisper_transcription(video_url):
+    """
+    Enhanced transcription with FFmpeg-based audio splitting for YouTube videos.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        audio_path = os.path.join(tmpdir, "audio.mp3")
+        
+        # Download audio with size optimization
+        result = subprocess.run(
+            [
+                "yt-dlp",
+                "-f", "bestaudio[ext=m4a]/bestaudio",
+                "-x",
+                "--audio-format", "mp3",
+                "--audio-quality", "5",  # Compress audio
+                "-o", audio_path,
+                video_url
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        
+        if result.returncode != 0:
+            raise Exception("Failed to download audio from YouTube")
+        
+        return transcribe_audio_chunks(audio_path)
+
+def transcribe_local_video(video_file):
+    """
+    Transcribe local video file using Groq Whisper with chunking support.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Save uploaded video
+        video_path = os.path.join(tmpdir, f"video{os.path.splitext(video_file.name)[1]}")
+        with open(video_path, "wb") as f:
+            f.write(video_file.read())
+        
+        # Extract audio from video
+        audio_path = os.path.join(tmpdir, "audio.mp3")
+        
+        result = subprocess.run(
+            [
+                "ffmpeg",
+                "-i", video_path,
+                "-vn",  # No video
+                "-acodec", "libmp3lame",
+                "-q:a", "5",  # Compress audio
+                "-y",
+                audio_path
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        
+        if result.returncode != 0:
+            raise Exception("Failed to extract audio from video")
+        
+        return transcribe_audio_chunks(audio_path)
+
+def transcribe_audio_file(audio_file):
+    """
+    Transcribe audio file using Groq Whisper with chunking support.
+    Converts to MP3 if needed.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Save uploaded audio
+        file_ext = os.path.splitext(audio_file.name)[1].lower()
+        input_path = os.path.join(tmpdir, f"input{file_ext}")
+        
+        with open(input_path, "wb") as f:
+            f.write(audio_file.read())
+        
+        # Convert to MP3 if not already MP3
+        if file_ext != ".mp3":
+            audio_path = os.path.join(tmpdir, "audio.mp3")
+            result = subprocess.run(
+                [
+                    "ffmpeg",
+                    "-i", input_path,
+                    "-acodec", "libmp3lame",
+                    "-q:a", "5",  # Compress audio
+                    "-y",
+                    audio_path
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            
+            if result.returncode != 0:
+                raise Exception("Failed to convert audio file")
+        else:
+            audio_path = input_path
+        
+        return transcribe_audio_chunks(audio_path)
+
+>>>>>>> f899eee (full code)
 # =========================================================
 # EXPORTS
 # =========================================================
@@ -401,7 +783,11 @@ def export_pdf(text):
     doc = SimpleDocTemplate(buffer, pagesize=A4)
     styles = getSampleStyleSheet()
     story = []
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> f899eee (full code)
     for line in text.split("\n"):
         story.append(Paragraph(line, styles["Normal"]))
         story.append(Spacer(1, 6))
@@ -420,6 +806,7 @@ def export_docx(text):
     return buffer
 
 # =========================================================
+<<<<<<< HEAD
 # UI - TABS
 # =========================================================
 
@@ -433,10 +820,34 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # =========================================================
 # TAB 1: FILE UPLOAD
 # =========================================================
+=======
+# SHOW DEPENDENCY WARNING
+# =========================================================
+show_dependency_warning()
+>>>>>>> f899eee (full code)
 
+# =========================================================
+# UI - TABS
+# =========================================================
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "📄 Upload File", 
+    "✍️ Paste Text", 
+    "🌐 Webpage", 
+    "📺 YouTube Video", 
+    "🎬 Local Video", 
+    "🎵 Audio File"
+])
+
+# =========================================================
+# TAB 1: FILE UPLOAD
+# =========================================================
 with tab1:
     st.markdown("### 📄 Upload Document")
+<<<<<<< HEAD
     st.info("📄 Summarize PDF, DOCX, TXT, PPT, PPTX, CSV, or Excel files.")
+=======
+    st.info("📄 Summarize documents by uploading them below.")
+>>>>>>> f899eee (full code)
     
     uploaded = st.file_uploader(
         "Choose a file",
@@ -535,6 +946,7 @@ with tab1:
                 else:
                     st.warning("⚠️ No text extracted from file")
 
+<<<<<<< HEAD
 # =========================================================
 # TAB 2: PASTE TEXT
 # =========================================================
@@ -547,6 +959,113 @@ with tab2:
     
     col1, col2 = st.columns(2)
     
+=======
+    with col1:
+        if st.button("⚡ Quick Summary", key="btn_quick_file", use_container_width=True):
+            if not uploaded:
+                st.warning("Please upload a file")
+            else:
+                file_ext = uploaded.name.split(".")[-1].lower()
+                
+                # Display file info
+                file_size_mb = len(uploaded.getvalue()) / (1024 * 1024)
+                st.caption(f"📦 File: {uploaded.name} ({file_size_mb:.2f} MB)")
+                
+                # Extract text based on file type
+                with st.spinner(f"📖 Reading {file_ext.upper()} file..."):
+                    if file_ext == "pdf":
+                        text = extract_text_from_pdf(uploaded)
+                    elif file_ext == "docx":
+                        text = extract_text_from_docx(uploaded)
+                    elif file_ext == "txt":
+                        text = extract_text_from_txt(uploaded)
+                    elif file_ext in ["ppt", "pptx"]:
+                        text = extract_text_from_ppt(uploaded)
+                    elif file_ext == "csv":
+                        text = extract_text_from_csv(uploaded)
+                    elif file_ext in ["xls", "xlsx"]:
+                        text = extract_text_from_excel(uploaded)
+                    else:
+                        st.error("Unsupported file type")
+                        st.stop()
+                
+                if text:
+                    word_count = len(text.split())
+                    st.success(f"✅ Extracted {word_count:,} words")
+                    
+                    if not st.session_state.is_generating:
+                        st.session_state.is_generating = True
+                        st.session_state.source_text = text
+                        with st.spinner("Indexing & Summarizing..."):
+                            st.session_state.vectorstore = build_vectorstore(text)
+                            st.session_state.quick_summary = rag_summary(
+                                st.session_state.vectorstore, "quick"
+                            )
+                        st.session_state.summary_type = "quick"
+                        st.session_state.is_generating = False
+                        st.rerun()
+                else:
+                    st.warning("⚠️ No text extracted from file")
+                    st.stop()
+
+    with col2:
+        if st.button("📋 Detailed Summary", key="btn_detailed_file", use_container_width=True):
+            if not uploaded:
+                st.warning("Please upload a file")
+            else:
+                file_ext = uploaded.name.split(".")[-1].lower()
+                
+                # Display file info
+                file_size_mb = len(uploaded.getvalue()) / (1024 * 1024)
+                st.caption(f"📦 File: {uploaded.name} ({file_size_mb:.2f} MB)")
+                
+                # Extract text based on file type
+                with st.spinner(f"📖 Reading {file_ext.upper()} file..."):
+                    if file_ext == "pdf":
+                        text = extract_text_from_pdf(uploaded)
+                    elif file_ext == "docx":
+                        text = extract_text_from_docx(uploaded)
+                    elif file_ext == "txt":
+                        text = extract_text_from_txt(uploaded)
+                    elif file_ext in ["ppt", "pptx"]:
+                        text = extract_text_from_ppt(uploaded)
+                    elif file_ext == "csv":
+                        text = extract_text_from_csv(uploaded)
+                    elif file_ext in ["xls", "xlsx"]:
+                        text = extract_text_from_excel(uploaded)
+                    else:
+                        st.error("Unsupported file type")
+                        st.stop()
+                
+                if text:
+                    word_count = len(text.split())
+                    st.success(f"✅ Extracted {word_count:,} words")
+                    
+                    if not st.session_state.is_generating:
+                        st.session_state.is_generating = True
+                        st.session_state.source_text = text
+                        with st.spinner("Indexing & Summarizing..."):
+                            st.session_state.vectorstore = build_vectorstore(text)
+                            st.session_state.detailed_summary = rag_summary(
+                                st.session_state.vectorstore, "detailed"
+                            )
+                        st.session_state.summary_type = "detailed"
+                        st.session_state.is_generating = False
+                        st.rerun()
+                else:
+                    st.warning("⚠️ No text extracted from file")
+                    st.stop()
+
+# =========================================================
+# TAB 2: PASTE TEXT
+# =========================================================
+with tab2:
+    st.markdown("### ✍️ Summarize Text")
+    st.info("✍️ Paste or type any text to summarize.")
+    pasted = st.text_area("✍️ Paste text", height=200)
+    col1, col2 = st.columns(2)
+
+>>>>>>> f899eee (full code)
     with col1:
         if st.button("⚡ Quick Summary", key="btn_quick_paste", use_container_width=True):
             if not pasted:
@@ -555,7 +1074,10 @@ with tab2:
                 if not st.session_state.is_generating:
                     st.session_state.is_generating = True
                     st.session_state.source_text = pasted
+<<<<<<< HEAD
                     
+=======
+>>>>>>> f899eee (full code)
                     with st.spinner("Indexing & Summarizing..."):
                         st.session_state.vectorstore = build_vectorstore(pasted)
                         st.session_state.quick_summary = rag_summary(
@@ -564,7 +1086,11 @@ with tab2:
                         st.session_state.summary_type = "quick"
                         st.session_state.is_generating = False
                     st.rerun()
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> f899eee (full code)
     with col2:
         if st.button("📋 Detailed Summary", key="btn_detailed_paste", use_container_width=True):
             if not pasted:
@@ -573,7 +1099,10 @@ with tab2:
                 if not st.session_state.is_generating:
                     st.session_state.is_generating = True
                     st.session_state.source_text = pasted
+<<<<<<< HEAD
                     
+=======
+>>>>>>> f899eee (full code)
                     with st.spinner("Indexing & Summarizing..."):
                         st.session_state.vectorstore = build_vectorstore(pasted)
                         st.session_state.detailed_summary = rag_summary(
@@ -582,20 +1111,34 @@ with tab2:
                         st.session_state.summary_type = "detailed"
                         st.session_state.is_generating = False
                     st.rerun()
+<<<<<<< HEAD
 
 # =========================================================
 # TAB 3: WEBPAGE SUMMARIZER
 # =========================================================
 
+=======
+                    
+# =========================================================
+# TAB 3: WEBPAGE SUMMARIZER
+# =========================================================
+>>>>>>> f899eee (full code)
 with tab3:
     st.markdown("### 🌐 Summarize Webpage")
     st.info("🔗 Enter any webpage URL to extract and summarize its content.")
     
     webpage_url = st.text_input(
         "🔗 Enter webpage URL",
+<<<<<<< HEAD
         key="webpage_url_input"
     )
     
+=======
+        key="webpage_url_input",
+    )
+    
+    # Show URL validation
+>>>>>>> f899eee (full code)
     if webpage_url:
         if is_valid_url(webpage_url):
             st.success("✅ Valid URL")
@@ -613,6 +1156,10 @@ with tab3:
             else:
                 with st.spinner("🌐 Fetching and analyzing webpage..."):
                     try:
+<<<<<<< HEAD
+=======
+                        # Extract webpage content
+>>>>>>> f899eee (full code)
                         webpage_text = extract_text_from_webpage(webpage_url)
                         
                         if not webpage_text or len(webpage_text.strip()) < 100:
@@ -622,6 +1169,10 @@ with tab3:
                         word_count = len(webpage_text.split())
                         st.success(f"✅ Extracted {word_count:,} words from webpage")
                         
+<<<<<<< HEAD
+=======
+                        # Build vectorstore and generate summary
+>>>>>>> f899eee (full code)
                         st.session_state.source_text = webpage_text
                         st.session_state.vectorstore = build_vectorstore(webpage_text)
                         st.session_state.quick_summary = rag_summary(
@@ -634,6 +1185,7 @@ with tab3:
                         st.error(f"❌ Error: {str(e)}")
                         st.info("💡 Tip: Make sure the URL is accessible and contains readable content")
     
+<<<<<<< HEAD
     with col2:
         if st.button("📋 Detailed Summary", key="btn_webpage_detailed", use_container_width=True):
             if not webpage_url:
@@ -726,6 +1278,290 @@ with tab4:
                     st.rerun()
 
 # =========================================================
+=======
+    with col2:
+        if st.button("📋 Detailed Summary", key="btn_webpage_detailed", use_container_width=True):
+            if not webpage_url:
+                st.warning("Please enter a webpage URL")
+            elif not is_valid_url(webpage_url):
+                st.error("Invalid URL format")
+            else:
+                with st.spinner("🌐 Fetching and analyzing webpage..."):
+                    try:
+                        # Extract webpage content
+                        webpage_text = extract_text_from_webpage(webpage_url)
+                        
+                        if not webpage_text or len(webpage_text.strip()) < 100:
+                            st.error("⚠️ Could not extract sufficient content from the webpage")
+                            st.stop()
+                        
+                        word_count = len(webpage_text.split())
+                        st.success(f"✅ Extracted {word_count:,} words from webpage")
+                        
+                        # Build vectorstore and generate summary
+                        st.session_state.source_text = webpage_text
+                        st.session_state.vectorstore = build_vectorstore(webpage_text)
+                        st.session_state.detailed_summary = rag_summary(
+                            st.session_state.vectorstore, "detailed"
+                        )
+                        st.session_state.summary_type = "detailed"
+                        st.rerun()
+                        
+                    except Exception as e:
+                        st.error(f"❌ Error: {str(e)}")
+                        st.info("💡 Tip: Make sure the URL is accessible and contains readable content")
+
+# =========================================================
+# TAB 4: YOUTUBE VIDEO
+# =========================================================
+with tab4:
+    st.markdown("### 📺 Summarize YouTube Video")
+    st.info("🔗 Enter any YouTube link to extract and summarize its content.")
+    
+    # Check if YouTube features are available
+    missing = check_dependencies()
+    youtube_enabled = not missing and GROQ_API_KEY
+    
+    if not youtube_enabled:
+        st.error("⚠️ YouTube features require additional setup. See warning at the top of the page.")
+    
+    youtube_link = st.text_input(
+        "🔗 Enter YouTube Video Link",
+        disabled=not youtube_enabled
+    )
+    
+    video_id = extract_video_id(youtube_link) if youtube_link else None
+    
+    if video_id:
+        st.image(
+            f"https://img.youtube.com/vi/{video_id}/0.jpg",
+            width=720
+        )
+    elif youtube_link:
+        st.warning("⚠️ Invalid YouTube link")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("⚡ Quick Summary", key="btn_youtube_quick", use_container_width=True, disabled=not youtube_enabled):
+            if not youtube_link:
+                st.warning("Please enter a YouTube link")
+            elif not video_id:
+                st.error("Invalid YouTube URL")
+            else:
+                with st.spinner("Processing video..."):
+                    try:
+                        transcript = get_youtube_transcript(video_id)
+                        
+                        if transcript:
+                            st.info("✅ Using YouTube captions")
+                        else:
+                            st.info("🎙️ using Groq Whisper")
+                            try:
+                                transcript = groq_whisper_transcription(youtube_link)
+                            except Exception as e:
+                                st.error(f"❌ Transcription failed: {str(e)}")
+                                st.info("💡 Make sure yt-dlp and ffmpeg are installed")
+                                st.stop()
+                        
+                        st.session_state.source_text = transcript
+                        st.session_state.vectorstore = build_vectorstore(transcript)
+                        st.session_state.quick_summary = rag_summary(
+                            st.session_state.vectorstore, "quick"
+                        )
+                        st.session_state.summary_type = "quick"
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Error: {str(e)}")
+    
+    with col2:
+        if st.button("📋 Detailed Summary", key="btn_youtube_detailed", use_container_width=True, disabled=not youtube_enabled):
+            if not youtube_link:
+                st.warning("Please enter a YouTube link")
+            elif not video_id:
+                st.error("Invalid YouTube URL")
+            else:
+                with st.spinner("🎙️ Transcribing video audio..."):
+                    try:
+                        transcript = get_youtube_transcript(video_id)
+                        
+                        if transcript:
+                            st.info("✅ Using YouTube captions")
+                        else:
+                            try:
+                                transcript = groq_whisper_transcription(youtube_link)
+                            except Exception as e:
+                                st.error(f"❌ Transcription failed: {str(e)}")
+                                st.info("💡 Make sure yt-dlp and ffmpeg are installed")
+                                st.stop()
+                        
+                        st.session_state.source_text = transcript
+                        st.session_state.vectorstore = build_vectorstore(transcript)
+                        st.session_state.detailed_summary = rag_summary(
+                            st.session_state.vectorstore, "detailed"
+                        )
+                        st.session_state.summary_type = "detailed"
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Error: {str(e)}")
+
+# =========================================================
+# TAB 5: LOCAL VIDEO
+# =========================================================
+with tab5:
+    st.markdown("### 🎬 Summarize Local Video")
+    st.info("🎬 Summarize videos from your device.")
+    
+    # Check if video features are available
+    video_enabled = groq_client is not None
+    
+    if not video_enabled:
+        st.error("⚠️ Video transcription requires Groq API. See warning at the top of the page.")
+    
+    video_file = st.file_uploader(
+        "Choose a video file",
+        type=["mp4", "avi", "mov", "mkv", "flv", "wmv"],
+        key="local_video_uploader",
+        disabled=not video_enabled
+    )
+    
+    if video_file:
+        st.video(video_file)
+        
+        file_size_mb = len(video_file.getvalue()) / (1024 * 1024)
+        st.caption(f"📦 File size: {file_size_mb:.1f} MB")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("⚡ Quick Summary", key="btn_local_video_quick", use_container_width=True, disabled=not video_enabled):
+            if not video_file:
+                st.warning("Please upload a video file")
+            else:
+                with st.spinner("🎙️ Transcribing video audio..."):
+                    try:
+                        # Reset file pointer
+                        video_file.seek(0)
+                        transcript = transcribe_local_video(video_file)
+                        
+                        st.success(f"✅ Transcribed {len(transcript.split())} words")
+                        
+                        st.session_state.source_text = transcript
+                        st.session_state.vectorstore = build_vectorstore(transcript)
+                        st.session_state.quick_summary = rag_summary(
+                            st.session_state.vectorstore, "quick"
+                        )
+                        st.session_state.summary_type = "quick"
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Transcription failed: {str(e)}")
+                        st.stop()
+    
+    with col2:
+        if st.button("📋 Detailed Summary", key="btn_local_video_detailed", use_container_width=True, disabled=not video_enabled):
+            if not video_file:
+                st.warning("Please upload a video file")
+            else:
+                with st.spinner("🎙️ Transcribing video audio..."):
+                    try:
+                        # Reset file pointer
+                        video_file.seek(0)
+                        transcript = transcribe_local_video(video_file)
+                        
+                        st.success(f"✅ Transcribed {len(transcript.split())} words")
+                        
+                        st.session_state.source_text = transcript
+                        st.session_state.vectorstore = build_vectorstore(transcript)
+                        st.session_state.detailed_summary = rag_summary(
+                            st.session_state.vectorstore, "detailed"
+                        )
+                        st.session_state.summary_type = "detailed"
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Transcription failed: {str(e)}")
+                        st.stop()
+
+# =========================================================
+# TAB 6: AUDIO FILE
+# =========================================================
+with tab6:
+    st.markdown("### 🎵 Summarize Audio")
+    st.info("🎵 Summarize audio files from your device.")
+    
+    # Check if audio features are available
+    audio_enabled = groq_client is not None
+    
+    if not audio_enabled:
+        st.error("⚠️ Audio transcription requires Groq API. See warning at the top of the page.")
+    
+    audio_file = st.file_uploader(
+        "Choose an audio file",
+        type=["mp3", "wav", "m4a", "flac", "ogg", "aac"],
+        key="audio_file_uploader",
+        disabled=not audio_enabled
+    )
+    
+    if audio_file:
+        st.audio(audio_file)
+        
+        file_size_mb = len(audio_file.getvalue()) / (1024 * 1024)
+        st.caption(f"📦 File size: {file_size_mb:.1f} MB")
+        
+        if file_size_mb > 20:
+            st.info("ℹ️ Large audio file will be automatically split into chunks for transcription")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("⚡ Quick Summary", key="btn_audio_quick", use_container_width=True, disabled=not audio_enabled):
+            if not audio_file:
+                st.warning("Please upload an audio file")
+            else:
+                with st.spinner("🎙️ Transcribing audio..."):
+                    try:
+                        # Reset file pointer
+                        audio_file.seek(0)
+                        transcript = transcribe_audio_file(audio_file)
+                        
+                        st.success(f"✅ Transcribed {len(transcript.split())} words")
+                        
+                        st.session_state.source_text = transcript
+                        st.session_state.vectorstore = build_vectorstore(transcript)
+                        st.session_state.quick_summary = rag_summary(
+                            st.session_state.vectorstore, "quick"
+                        )
+                        st.session_state.summary_type = "quick"
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Transcription failed: {str(e)}")
+                        st.stop()
+    
+    with col2:
+        if st.button("📋 Detailed Summary", key="btn_audio_detailed", use_container_width=True, disabled=not audio_enabled):
+            if not audio_file:
+                st.warning("Please upload an audio file")
+            else:
+                with st.spinner("🎙️ Transcribing audio..."):
+                    try:
+                        # Reset file pointer
+                        audio_file.seek(0)
+                        transcript = transcribe_audio_file(audio_file)
+                        
+                        st.success(f"✅ Transcribed {len(transcript.split())} words")
+                        
+                        st.session_state.source_text = transcript
+                        st.session_state.vectorstore = build_vectorstore(transcript)
+                        st.session_state.detailed_summary = rag_summary(
+                            st.session_state.vectorstore, "detailed"
+                        )
+                        st.session_state.summary_type = "detailed"
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Transcription failed: {str(e)}")
+                        st.stop()
+
+# =========================================================
+>>>>>>> f899eee (full code)
 # RESULT DISPLAY
 # =========================================================
 
@@ -737,12 +1573,25 @@ summary = (
 if summary:
     st.divider()
     st.header("🧠 Summary")
+<<<<<<< HEAD
     st.markdown(summary)
     
     st.write("---")
     with st.expander("📝 View Raw Text (Copy to Clipboard)"):
         st.code(summary, language="markdown")
     
+=======
+    
+    # Render the Markdown Summary
+    st.markdown(summary)
+
+    # Copy Functionality
+    st.write("---")
+    with st.expander("📝 View Raw Text (Copy to Clipboard)"):
+        st.code(summary, language="markdown")
+        
+    # Exports
+>>>>>>> f899eee (full code)
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -772,4 +1621,11 @@ if summary:
             use_container_width=True
         )
 
+<<<<<<< HEAD
 st.divider()
+=======
+# =========================================================
+# FOOTER
+# =========================================================
+st.divider()
+>>>>>>> f899eee (full code)
