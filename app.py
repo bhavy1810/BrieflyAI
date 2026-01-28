@@ -1,9 +1,5 @@
 # =========================================================
-<<<<<<< HEAD
-# BrieflyAI – RAG-based Document, Text, Webpage & YouTube Summarizer
-=======
 # BrieflyAI – RAG-based PDF, DOCX, TXT, PPT, CSV, Excel, YouTube, Video, Audio & Webpage Summarizer
->>>>>>> f899eee (full code)
 # LangChain + Groq + FAISS
 # UPDATED: Enhanced error handling and dependency checks
 # =========================================================
@@ -12,16 +8,11 @@ import streamlit as st
 import os
 import io
 import re
-<<<<<<< HEAD
-from io import BytesIO
-from dotenv import load_dotenv
-=======
 import subprocess
 import tempfile
 from io import BytesIO
 from dotenv import load_dotenv
 import math
->>>>>>> f899eee (full code)
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -52,10 +43,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-<<<<<<< HEAD
-# YouTube
-from youtube_transcript_api import YouTubeTranscriptApi
-=======
 # YouTube & Transcription - with error handling
 try:
     from youtube_transcript_api import YouTubeTranscriptApi
@@ -68,12 +55,10 @@ try:
     GROQ_AVAILABLE = True
 except ImportError:
     GROQ_AVAILABLE = False
->>>>>>> f899eee (full code)
 
 # =========================================================
 # CONFIG
 # =========================================================
-
 load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
@@ -83,26 +68,15 @@ def load_css(file_name):
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     except:
         pass
-<<<<<<< HEAD
-
-load_css("style.css")
-
-bubbles_html = ''.join([
-    f'<div class="bubble" style="--i:{i};"></div>'
-=======
         
 load_css("style.css")
 bubbles_html = ''.join([
     f'<div class="floating-bubble bubble-{i}"></div>' 
->>>>>>> f899eee (full code)
     for i in range(1, 21)
 ])
 st.markdown(bubbles_html, unsafe_allow_html=True)
 
-<<<<<<< HEAD
-=======
 
->>>>>>> f899eee (full code)
 st.set_page_config(
     page_title="BrieflyAI",
     page_icon="📄",
@@ -110,9 +84,6 @@ st.set_page_config(
 )
 
 st.title("📄 BrieflyAI")
-<<<<<<< HEAD
-st.markdown("Upload **PDF / DOCX / TXT / PPT / CSV / Excel**, paste text, summarize **YouTube videos** or **webpages** with **RAG-powered AI summaries** 🚀")
-=======
 st.markdown("Upload **PDF / DOCX / TXT / PPT / CSV / Excel / Videos / Audio**, paste text, summarize **YouTube videos** or **webpages** with **RAG-powered AI summaries** 🚀")
 
 # =========================================================
@@ -160,12 +131,10 @@ def show_dependency_warning():
             if st.button("✅ I've installed the dependencies"):
                 st.session_state.show_youtube_warning = False
                 st.rerun()
->>>>>>> f899eee (full code)
 
 # =========================================================
 # SESSION STATE
 # =========================================================
-
 defaults = {
     "quick_summary": None,
     "detailed_summary": None,
@@ -183,10 +152,6 @@ for k, v in defaults.items():
 # =========================================================
 # LLM SETUP
 # =========================================================
-<<<<<<< HEAD
-
-=======
->>>>>>> f899eee (full code)
 if not GROQ_API_KEY:
     st.error("❌ GROQ_API_KEY not found in environment variables.")
     st.info("📝 To fix this:")
@@ -198,7 +163,6 @@ llm = ChatGroq(
     model="llama-3.3-70b-versatile",
     temperature=0.3,
 )
-
 output_parser = StrOutputParser()
 
 # Setup Groq for transcription
@@ -210,7 +174,6 @@ else:
 # =========================================================
 # HELPERS - FILE PROCESSING
 # =========================================================
-
 def extract_text_from_pdf(file):
     reader = PyPDF2.PdfReader(io.BytesIO(file.read()))
     return "\n".join(p.extract_text() or "" for p in reader.pages)
@@ -223,17 +186,11 @@ def extract_text_from_txt(file):
     """Extract text from TXT file with encoding detection."""
     try:
         content = file.read()
-<<<<<<< HEAD
-        try:
-            return content.decode('utf-8')
-        except UnicodeDecodeError:
-=======
         # Try UTF-8 first
         try:
             return content.decode('utf-8')
         except UnicodeDecodeError:
             # Fallback to latin-1
->>>>>>> f899eee (full code)
             return content.decode('latin-1')
     except Exception as e:
         st.error(f"Error reading TXT file: {str(e)}")
@@ -340,10 +297,6 @@ def extract_text_from_excel(file):
 # =========================================================
 # HELPERS - WEBPAGE SCRAPING
 # =========================================================
-<<<<<<< HEAD
-
-=======
->>>>>>> f899eee (full code)
 def is_valid_url(url):
     """Validate URL format."""
     try:
@@ -358,25 +311,16 @@ def extract_text_from_webpage(url):
     Removes scripts, styles, navigation, and other non-content elements.
     """
     try:
-<<<<<<< HEAD
-=======
         # Set headers to mimic a browser
->>>>>>> f899eee (full code)
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
         
-<<<<<<< HEAD
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        
-=======
         # Fetch the webpage
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         
         # Parse with BeautifulSoup
->>>>>>> f899eee (full code)
         soup = BeautifulSoup(response.content, 'html.parser')
         
         # Remove unwanted elements
@@ -392,10 +336,7 @@ def extract_text_from_webpage(url):
         description = meta_desc.get('content', '').strip() if meta_desc else ""
         
         # Extract main content
-<<<<<<< HEAD
-=======
         # Try to find main content area
->>>>>>> f899eee (full code)
         main_content = soup.find('main') or soup.find('article') or soup.find('div', class_=re.compile('content|main|article'))
         
         if main_content:
@@ -403,42 +344,29 @@ def extract_text_from_webpage(url):
         else:
             text_elements = soup.find_all(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'])
         
-<<<<<<< HEAD
-        content_parts = []
-=======
         # Extract text from elements
         content_parts = []
         
         # Add title and description
->>>>>>> f899eee (full code)
         content_parts.append(f"TITLE: {title_text}\n")
         if description:
             content_parts.append(f"DESCRIPTION: {description}\n")
         content_parts.append(f"URL: {url}\n")
         content_parts.append("=" * 50 + "\n")
         
-<<<<<<< HEAD
-        for element in text_elements:
-            text = element.get_text().strip()
-            if text and len(text) > 20:
-=======
         # Add main content
         for element in text_elements:
             text = element.get_text().strip()
             if text and len(text) > 20:  # Filter out very short text
                 # Add heading markers
->>>>>>> f899eee (full code)
                 if element.name in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
                     content_parts.append(f"\n## {text}\n")
                 else:
                     content_parts.append(text)
         
         full_text = "\n".join(content_parts)
-<<<<<<< HEAD
-=======
         
         # Clean up extra whitespace
->>>>>>> f899eee (full code)
         full_text = re.sub(r'\n{3,}', '\n\n', full_text)
         
         return full_text
@@ -455,10 +383,6 @@ def extract_text_from_webpage(url):
 # =========================================================
 # HELPERS - VECTORSTORE & SUMMARIZATION
 # =========================================================
-<<<<<<< HEAD
-
-=======
->>>>>>> f899eee (full code)
 def build_vectorstore(text):
     splitter = RecursiveCharacterTextSplitter(chunk_size=1200, chunk_overlap=200)
     docs = splitter.create_documents([text])
@@ -472,7 +396,8 @@ def rag_summary(vectorstore, summary_type):
         k = 4
         max_words = 200
         template = """
-You are an expert summarization AI. Using ONLY the context below, generate a clear and concise summary of about {max_words} words.
+You are an expert summarization AI.
+Using ONLY the context below, generate a clear and concise summary of about {max_words} words.
 
 Context:
 {context}
@@ -483,7 +408,8 @@ Quick Summary:
         k = 10
         max_words = 800
         template = """
-You are an expert summarization AI. Using ONLY the context below, generate a detailed summary of about {max_words} words.
+You are an expert summarization AI.
+Using ONLY the context below, generate a detailed summary of about {max_words} words.
 Use headings, bullet points, and clear explanations.
 
 Context:
@@ -491,18 +417,14 @@ Context:
 
 Detailed Summary:
 """
-    
+
     retriever = vectorstore.as_retriever(search_kwargs={"k": k})
     docs = retriever.invoke("Summarize the document")
     context = "\n\n".join(d.page_content for d in docs)
-    
+
     prompt = ChatPromptTemplate.from_template(template)
     chain = prompt | llm | output_parser
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> f899eee (full code)
     return chain.invoke({
         "context": context[:25000],
         "max_words": max_words
@@ -511,10 +433,6 @@ Detailed Summary:
 # =========================================================
 # HELPERS - YOUTUBE
 # =========================================================
-<<<<<<< HEAD
-
-=======
->>>>>>> f899eee (full code)
 def extract_video_id(url):
     patterns = [
         r"v=([^&]+)",
@@ -529,29 +447,6 @@ def extract_video_id(url):
     return None
 
 def get_youtube_transcript(video_id):
-<<<<<<< HEAD
-    try:
-        # Try to get transcript in English first
-        try:
-            transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
-        except:
-            # If English not available, try to get any available transcript
-            try:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-                # Get the first available transcript
-                transcript = next(iter(transcript_list))
-                transcript_data = transcript.fetch()
-            except:
-                # Last resort: get transcript in any language
-                transcript_data = YouTubeTranscriptApi.get_transcript(video_id)
-        
-        return " ".join(item["text"] for item in transcript_data)
-    except Exception as e:
-        st.error(f"Could not fetch transcript: {str(e)}")
-        st.info("💡 This video may not have captions available, or captions are disabled.")
-        return None
-
-=======
     """Get transcript from YouTube if available"""
     if not YOUTUBE_TRANSCRIPT_AVAILABLE:
         return None
@@ -773,25 +668,19 @@ def transcribe_audio_file(audio_file):
         
         return transcribe_audio_chunks(audio_path)
 
->>>>>>> f899eee (full code)
 # =========================================================
 # EXPORTS
 # =========================================================
-
 def export_pdf(text):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4)
     styles = getSampleStyleSheet()
     story = []
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> f899eee (full code)
     for line in text.split("\n"):
         story.append(Paragraph(line, styles["Normal"]))
         story.append(Spacer(1, 6))
-    
+
     doc.build(story)
     buffer.seek(0)
     return buffer
@@ -806,25 +695,9 @@ def export_docx(text):
     return buffer
 
 # =========================================================
-<<<<<<< HEAD
-# UI - TABS
-# =========================================================
-
-tab1, tab2, tab3, tab4 = st.tabs([
-    "📄 Upload Document",
-    "✍️ Paste Text",
-    "🌐 Webpage",
-    "📺 YouTube Video"
-])
-
-# =========================================================
-# TAB 1: FILE UPLOAD
-# =========================================================
-=======
 # SHOW DEPENDENCY WARNING
 # =========================================================
 show_dependency_warning()
->>>>>>> f899eee (full code)
 
 # =========================================================
 # UI - TABS
@@ -843,11 +716,7 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 # =========================================================
 with tab1:
     st.markdown("### 📄 Upload Document")
-<<<<<<< HEAD
-    st.info("📄 Summarize PDF, DOCX, TXT, PPT, PPTX, CSV, or Excel files.")
-=======
     st.info("📄 Summarize documents by uploading them below.")
->>>>>>> f899eee (full code)
     
     uploaded = st.file_uploader(
         "Choose a file",
@@ -855,111 +724,7 @@ with tab1:
     )
     
     col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("⚡ Quick Summary", key="btn_quick_file", use_container_width=True):
-            if not uploaded:
-                st.warning("Please upload a file")
-            else:
-                file_ext = uploaded.name.split(".")[-1].lower()
-                file_size_mb = len(uploaded.getvalue()) / (1024 * 1024)
-                st.caption(f"📦 File: {uploaded.name} ({file_size_mb:.2f} MB)")
-                
-                with st.spinner(f"📖 Reading {file_ext.upper()} file..."):
-                    if file_ext == "pdf":
-                        text = extract_text_from_pdf(uploaded)
-                    elif file_ext == "docx":
-                        text = extract_text_from_docx(uploaded)
-                    elif file_ext == "txt":
-                        text = extract_text_from_txt(uploaded)
-                    elif file_ext in ["ppt", "pptx"]:
-                        text = extract_text_from_ppt(uploaded)
-                    elif file_ext == "csv":
-                        text = extract_text_from_csv(uploaded)
-                    elif file_ext in ["xls", "xlsx"]:
-                        text = extract_text_from_excel(uploaded)
-                    else:
-                        st.error("Unsupported file type")
-                        st.stop()
-                
-                if text:
-                    word_count = len(text.split())
-                    st.success(f"✅ Extracted {word_count:,} words")
-                    
-                    if not st.session_state.is_generating:
-                        st.session_state.is_generating = True
-                        st.session_state.source_text = text
-                        
-                        with st.spinner("Indexing & Summarizing..."):
-                            st.session_state.vectorstore = build_vectorstore(text)
-                            st.session_state.quick_summary = rag_summary(
-                                st.session_state.vectorstore, "quick"
-                            )
-                            st.session_state.summary_type = "quick"
-                            st.session_state.is_generating = False
-                        st.rerun()
-                else:
-                    st.warning("⚠️ No text extracted from file")
-    
-    with col2:
-        if st.button("📋 Detailed Summary", key="btn_detailed_file", use_container_width=True):
-            if not uploaded:
-                st.warning("Please upload a file")
-            else:
-                file_ext = uploaded.name.split(".")[-1].lower()
-                file_size_mb = len(uploaded.getvalue()) / (1024 * 1024)
-                st.caption(f"📦 File: {uploaded.name} ({file_size_mb:.2f} MB)")
-                
-                with st.spinner(f"📖 Reading {file_ext.upper()} file..."):
-                    if file_ext == "pdf":
-                        text = extract_text_from_pdf(uploaded)
-                    elif file_ext == "docx":
-                        text = extract_text_from_docx(uploaded)
-                    elif file_ext == "txt":
-                        text = extract_text_from_txt(uploaded)
-                    elif file_ext in ["ppt", "pptx"]:
-                        text = extract_text_from_ppt(uploaded)
-                    elif file_ext == "csv":
-                        text = extract_text_from_csv(uploaded)
-                    elif file_ext in ["xls", "xlsx"]:
-                        text = extract_text_from_excel(uploaded)
-                    else:
-                        st.error("Unsupported file type")
-                        st.stop()
-                
-                if text:
-                    word_count = len(text.split())
-                    st.success(f"✅ Extracted {word_count:,} words")
-                    
-                    if not st.session_state.is_generating:
-                        st.session_state.is_generating = True
-                        st.session_state.source_text = text
-                        
-                        with st.spinner("Indexing & Summarizing..."):
-                            st.session_state.vectorstore = build_vectorstore(text)
-                            st.session_state.detailed_summary = rag_summary(
-                                st.session_state.vectorstore, "detailed"
-                            )
-                            st.session_state.summary_type = "detailed"
-                            st.session_state.is_generating = False
-                        st.rerun()
-                else:
-                    st.warning("⚠️ No text extracted from file")
 
-<<<<<<< HEAD
-# =========================================================
-# TAB 2: PASTE TEXT
-# =========================================================
-
-with tab2:
-    st.markdown("### ✍️ Summarize Text")
-    st.info("✍️ Paste or type any text to summarize.")
-    
-    pasted = st.text_area("✍️ Paste text", height=200)
-    
-    col1, col2 = st.columns(2)
-    
-=======
     with col1:
         if st.button("⚡ Quick Summary", key="btn_quick_file", use_container_width=True):
             if not uploaded:
@@ -1065,7 +830,6 @@ with tab2:
     pasted = st.text_area("✍️ Paste text", height=200)
     col1, col2 = st.columns(2)
 
->>>>>>> f899eee (full code)
     with col1:
         if st.button("⚡ Quick Summary", key="btn_quick_paste", use_container_width=True):
             if not pasted:
@@ -1074,23 +838,15 @@ with tab2:
                 if not st.session_state.is_generating:
                     st.session_state.is_generating = True
                     st.session_state.source_text = pasted
-<<<<<<< HEAD
-                    
-=======
->>>>>>> f899eee (full code)
                     with st.spinner("Indexing & Summarizing..."):
                         st.session_state.vectorstore = build_vectorstore(pasted)
                         st.session_state.quick_summary = rag_summary(
                             st.session_state.vectorstore, "quick"
                         )
-                        st.session_state.summary_type = "quick"
-                        st.session_state.is_generating = False
+                    st.session_state.summary_type = "quick"
+                    st.session_state.is_generating = False
                     st.rerun()
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> f899eee (full code)
     with col2:
         if st.button("📋 Detailed Summary", key="btn_detailed_paste", use_container_width=True):
             if not pasted:
@@ -1099,46 +855,28 @@ with tab2:
                 if not st.session_state.is_generating:
                     st.session_state.is_generating = True
                     st.session_state.source_text = pasted
-<<<<<<< HEAD
-                    
-=======
->>>>>>> f899eee (full code)
                     with st.spinner("Indexing & Summarizing..."):
                         st.session_state.vectorstore = build_vectorstore(pasted)
                         st.session_state.detailed_summary = rag_summary(
                             st.session_state.vectorstore, "detailed"
                         )
-                        st.session_state.summary_type = "detailed"
-                        st.session_state.is_generating = False
+                    st.session_state.summary_type = "detailed"
+                    st.session_state.is_generating = False
                     st.rerun()
-<<<<<<< HEAD
-
-# =========================================================
-# TAB 3: WEBPAGE SUMMARIZER
-# =========================================================
-
-=======
                     
 # =========================================================
 # TAB 3: WEBPAGE SUMMARIZER
 # =========================================================
->>>>>>> f899eee (full code)
 with tab3:
     st.markdown("### 🌐 Summarize Webpage")
     st.info("🔗 Enter any webpage URL to extract and summarize its content.")
     
     webpage_url = st.text_input(
         "🔗 Enter webpage URL",
-<<<<<<< HEAD
-        key="webpage_url_input"
-    )
-    
-=======
         key="webpage_url_input",
     )
     
     # Show URL validation
->>>>>>> f899eee (full code)
     if webpage_url:
         if is_valid_url(webpage_url):
             st.success("✅ Valid URL")
@@ -1156,10 +894,7 @@ with tab3:
             else:
                 with st.spinner("🌐 Fetching and analyzing webpage..."):
                     try:
-<<<<<<< HEAD
-=======
                         # Extract webpage content
->>>>>>> f899eee (full code)
                         webpage_text = extract_text_from_webpage(webpage_url)
                         
                         if not webpage_text or len(webpage_text.strip()) < 100:
@@ -1169,10 +904,7 @@ with tab3:
                         word_count = len(webpage_text.split())
                         st.success(f"✅ Extracted {word_count:,} words from webpage")
                         
-<<<<<<< HEAD
-=======
                         # Build vectorstore and generate summary
->>>>>>> f899eee (full code)
                         st.session_state.source_text = webpage_text
                         st.session_state.vectorstore = build_vectorstore(webpage_text)
                         st.session_state.quick_summary = rag_summary(
@@ -1185,100 +917,6 @@ with tab3:
                         st.error(f"❌ Error: {str(e)}")
                         st.info("💡 Tip: Make sure the URL is accessible and contains readable content")
     
-<<<<<<< HEAD
-    with col2:
-        if st.button("📋 Detailed Summary", key="btn_webpage_detailed", use_container_width=True):
-            if not webpage_url:
-                st.warning("Please enter a webpage URL")
-            elif not is_valid_url(webpage_url):
-                st.error("Invalid URL format")
-            else:
-                with st.spinner("🌐 Fetching and analyzing webpage..."):
-                    try:
-                        webpage_text = extract_text_from_webpage(webpage_url)
-                        
-                        if not webpage_text or len(webpage_text.strip()) < 100:
-                            st.error("⚠️ Could not extract sufficient content from the webpage")
-                            st.stop()
-                        
-                        word_count = len(webpage_text.split())
-                        st.success(f"✅ Extracted {word_count:,} words from webpage")
-                        
-                        st.session_state.source_text = webpage_text
-                        st.session_state.vectorstore = build_vectorstore(webpage_text)
-                        st.session_state.detailed_summary = rag_summary(
-                            st.session_state.vectorstore, "detailed"
-                        )
-                        st.session_state.summary_type = "detailed"
-                        st.rerun()
-                        
-                    except Exception as e:
-                        st.error(f"❌ Error: {str(e)}")
-                        st.info("💡 Tip: Make sure the URL is accessible and contains readable content")
-
-# =========================================================
-# TAB 4: YOUTUBE VIDEO
-# =========================================================
-
-with tab4:
-    st.markdown("### 📺 Summarize YouTube Video")
-    st.info("🔗 Enter any YouTube link to extract and summarize its content.")
-    
-    youtube_link = st.text_input("🔗 Enter YouTube Video Link")
-    video_id = extract_video_id(youtube_link) if youtube_link else None
-    
-    if video_id:
-        st.image(
-            f"https://img.youtube.com/vi/{video_id}/0.jpg",
-            width=720
-        )
-    elif youtube_link:
-        st.warning("⚠️ Invalid YouTube link")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("⚡ Quick Summary", key="btn_youtube_quick", use_container_width=True):
-            if not youtube_link:
-                st.warning("Please enter a YouTube link")
-            else:
-                with st.spinner("Processing video..."):
-                    transcript = get_youtube_transcript(video_id)
-                    
-                    if not transcript:
-                        st.error("❌ Could not fetch transcript for this video")
-                        st.stop()
-                    
-                    st.info("✅ Using YouTube captions")
-                    st.session_state.vectorstore = build_vectorstore(transcript)
-                    st.session_state.quick_summary = rag_summary(
-                        st.session_state.vectorstore, "quick"
-                    )
-                    st.session_state.summary_type = "quick"
-                    st.rerun()
-    
-    with col2:
-        if st.button("📋 Detailed Summary", key="btn_youtube_detailed", use_container_width=True):
-            if not youtube_link:
-                st.warning("Please enter a YouTube link")
-            else:
-                with st.spinner("Processing video with RAG..."):
-                    transcript = get_youtube_transcript(video_id)
-                    
-                    if not transcript:
-                        st.error("❌ Could not fetch transcript for this video")
-                        st.stop()
-                    
-                    st.info("✅ Using YouTube captions")
-                    st.session_state.vectorstore = build_vectorstore(transcript)
-                    st.session_state.detailed_summary = rag_summary(
-                        st.session_state.vectorstore, "detailed"
-                    )
-                    st.session_state.summary_type = "detailed"
-                    st.rerun()
-
-# =========================================================
-=======
     with col2:
         if st.button("📋 Detailed Summary", key="btn_webpage_detailed", use_container_width=True):
             if not webpage_url:
@@ -1561,26 +1199,17 @@ with tab6:
                         st.stop()
 
 # =========================================================
->>>>>>> f899eee (full code)
 # RESULT DISPLAY
 # =========================================================
-
 summary = (
-    st.session_state.quick_summary if st.session_state.summary_type == "quick"
+    st.session_state.quick_summary
+    if st.session_state.summary_type == "quick"
     else st.session_state.detailed_summary
 )
 
 if summary:
     st.divider()
     st.header("🧠 Summary")
-<<<<<<< HEAD
-    st.markdown(summary)
-    
-    st.write("---")
-    with st.expander("📝 View Raw Text (Copy to Clipboard)"):
-        st.code(summary, language="markdown")
-    
-=======
     
     # Render the Markdown Summary
     st.markdown(summary)
@@ -1591,7 +1220,6 @@ if summary:
         st.code(summary, language="markdown")
         
     # Exports
->>>>>>> f899eee (full code)
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -1602,7 +1230,6 @@ if summary:
             mime="text/plain",
             use_container_width=True
         )
-    
     with col2:
         st.download_button(
             label="📕 Export PDF",
@@ -1611,21 +1238,16 @@ if summary:
             mime="application/pdf",
             use_container_width=True
         )
-    
     with col3:
         st.download_button(
             label="📝 Export DOCX",
             data=export_docx(summary),
             file_name="summary.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            use_container_width=True
+            use_container_width=True,
         )
 
-<<<<<<< HEAD
-st.divider()
-=======
 # =========================================================
 # FOOTER
 # =========================================================
 st.divider()
->>>>>>> f899eee (full code)
