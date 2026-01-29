@@ -1253,9 +1253,3 @@ if summary:
 # FOOTER
 # =========================================================
 st.divider()
-st.markdown("""
-<div style='text-align: center; color: #888; padding: 20px;'>
-    <p>BrieflyAI - Powered by LangChain, Groq & FAISS</p>
-    <p style='font-size: 0.8em;'>Made with ❤️ using Streamlit</p>
-</div>
-""", unsafe_allow_html=True)
