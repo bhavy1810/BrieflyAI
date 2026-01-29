@@ -14,6 +14,34 @@
                 transform 0.25s ease;
 }
 
+/* ===============================
+   STREAMLIT HEADER FIX
+   =============================== */
+
+/* Main header bar */
+header[data-testid="stHeader"] {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Toolbar container (top-right buttons area) */
+header[data-testid="stHeader"] div {
+    background: transparent !important;
+}
+
+/* Remove black shadow overlay */
+header[data-testid="stHeader"]::after {
+    display: none !important;
+}
+
+/* Make header text & icons white */
+header[data-testid="stHeader"] * {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
 /* Main App Background */
 .stApp {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
